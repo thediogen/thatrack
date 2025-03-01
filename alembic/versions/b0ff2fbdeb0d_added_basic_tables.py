@@ -1,8 +1,8 @@
-"""Added three basic tables
+"""Added basic tables
 
-Revision ID: 78209069347b
+Revision ID: b0ff2fbdeb0d
 Revises: 
-Create Date: 2025-03-01 16:47:50.831214
+Create Date: 2025-03-01 19:22:32.627400
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '78209069347b'
+revision: str = 'b0ff2fbdeb0d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,10 +24,12 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=32), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('telegram_id', sa.String(), nullable=True),
     sa.Column('id', sa.Uuid(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('name')
     )
     op.create_index(op.f('ix_users_telegram_id'), 'users', ['telegram_id'], unique=False)
     op.create_table('tags',

@@ -2,6 +2,7 @@ import uuid
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, declared_attr
 from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy import select
 
 from backend.database import Session_dp
 
@@ -25,7 +26,16 @@ class Base(AsyncAttrs, DeclarativeBase):
         return instance
 
     @classmethod
-    async def get(cls, session: Session_dp, id: uuid.UUID):
-        instance = await session.get(cls, id)
+    async def get(cls, session: Session_dp, field, value):
+        stmt = select(cls).where(field == value)
+        instance = await session.execute(stmt)
+        instance = instance.scalar_one()
 
         return instance
+
+    @classmethod
+    async def all(cls, session: Session_dp):
+        query = await session.execute(select(cls))
+        result = query.scalars().all()
+
+        return result
